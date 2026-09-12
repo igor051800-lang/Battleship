@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statki</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Statki</h1>
+  <p class="subtitle" data-i18n="subtitle"></p>
+  <label class="lang">
+    <span data-i18n="language"></span>
+    <select id="language">
+      <option value="pl" selected>Polski</option>
+      <option value="en">English</option>
+    </select>
+  </label>
+</header>
+
+<main>
+  <section id="setup" class="panel">
+    <h2 data-i18n="setupTitle"></h2>
+    <p id="placement-info"></p>
+    <div class="controls">
+      <button id="rotate-btn" type="button"></button>
+      <button id="random-btn" type="button" data-i18n="randomize"></button>
+      <button id="reset-placement-btn" type="button" data-i18n="clear"></button>
+      <button id="start-btn" type="button" data-i18n="start" disabled></button>
+      <label class="difficulty">
+        <span data-i18n="aiLevel"></span>
+        <select id="difficulty">
+          <option value="hard" selected data-i18n="hard"></option>
+          <option value="easy" data-i18n="easy"></option>
+        </select>
+      </label>
+    </div>
+    <ul id="fleet-list" class="fleet-list"></ul>
+  </section>
+
+  <p id="status" class="status" role="status" aria-live="polite"></p>
+
+  <div class="boards">
+    <section class="board-wrap">
+      <h2 data-i18n="yourFleet"></h2>
+      <div id="player-board" class="board" aria-label="Twoja plansza"></div>
+    </section>
+    <section class="board-wrap">
+      <h2 data-i18n="enemyWaters"></h2>
+      <div id="enemy-board" class="board disabled" aria-label="Plansza przeciwnika"></div>
+    </section>
+  </div>
+
+  <section class="panel log-panel">
+    <h2 data-i18n="logTitle"></h2>
+    <ol id="log" class="log"></ol>
+  </section>
+</main>
+
+<div id="overlay" class="overlay hidden">
+  <div class="overlay-box">
+    <h2 id="overlay-title"></h2>
+    <p id="overlay-text"></p>
+    <button id="play-again-btn" type="button" data-i18n="playAgain"></button>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
