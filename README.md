@@ -32,6 +32,11 @@ Click cells on your own board to place ships in fleet order, `R` or the rotate b
 horizontal/vertical, hover shows a valid (green) / invalid (red) preview, "Losuj moją flotę"
 auto-places a legal fleet.
 
+## Scoreboard
+
+A live panel under the boards tracks hits, misses, accuracy, ships sunk and fleet remaining for
+both sides; it is derived from board state, so it always matches what the boards show.
+
 ## AI
 
 - Hard (default): hunt mode fires at random unshot cells on a checkerboard parity while all ships

@@ -150,6 +150,21 @@ select { font: inherit; padding: 6px; border-radius: 6px; border: 1px solid #b7c
 @keyframes pop { from { transform: scale(0.6); } to { transform: scale(1); } }
 @keyframes sink { from { opacity: 0.3; } to { opacity: 1; } }
 
+.scoreboard { margin-top: 16px; }
+.scoreboard table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.scoreboard th, .scoreboard td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #eef2f6;
+  text-align: right;
+}
+.scoreboard thead th { color: #5a6b7c; font-weight: 600; }
+.scoreboard tbody th { text-align: left; font-weight: 500; }
+.scoreboard td { font-variant-numeric: tabular-nums; }
+
 .log-panel { margin-top: 16px; }
 .log {
   max-height: 140px;

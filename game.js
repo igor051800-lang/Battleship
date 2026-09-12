@@ -238,6 +238,14 @@ const I18N = {
     yourBoard: 'Twoja plansza',
     enemyBoard: 'Plansza przeciwnika',
     logTitle: 'Dziennik strzałów',
+    scoreTitle: 'Wynik',
+    scoreYou: 'Ty',
+    scoreComputer: 'Komputer',
+    scoreHits: 'Trafienia',
+    scoreMisses: 'Pudła',
+    scoreAccuracy: 'Skuteczność',
+    scoreSunk: 'Zatopione statki',
+    scoreFleetLeft: 'Pozostała flota',
     playAgain: 'Zagraj ponownie',
     rotate: dir => `Obróć (R): ${dir === 'h' ? 'poziomo' : 'pionowo'}`,
     ship4: 'czteromasztowiec',
@@ -290,6 +298,14 @@ const I18N = {
     yourBoard: 'Your board',
     enemyBoard: "Enemy board",
     logTitle: 'Shot log',
+    scoreTitle: 'Score',
+    scoreYou: 'You',
+    scoreComputer: 'Computer',
+    scoreHits: 'Hits',
+    scoreMisses: 'Misses',
+    scoreAccuracy: 'Accuracy',
+    scoreSunk: 'Ships sunk',
+    scoreFleetLeft: 'Fleet left',
     playAgain: 'Play again',
     rotate: dir => `Rotate (R): ${dir === 'h' ? 'horizontal' : 'vertical'}`,
     ship4: 'four-cell ship',
@@ -357,6 +373,18 @@ const els = {
   placementInfo: document.getElementById('placement-info'),
   log: document.getElementById('log'),
   overlay: document.getElementById('overlay'),
+  score: {
+    hitsPlayer: document.getElementById('score-hits-player'),
+    hitsAi: document.getElementById('score-hits-ai'),
+    missesPlayer: document.getElementById('score-misses-player'),
+    missesAi: document.getElementById('score-misses-ai'),
+    accuracyPlayer: document.getElementById('score-accuracy-player'),
+    accuracyAi: document.getElementById('score-accuracy-ai'),
+    sunkPlayer: document.getElementById('score-sunk-player'),
+    sunkAi: document.getElementById('score-sunk-ai'),
+    leftPlayer: document.getElementById('score-left-player'),
+    leftAi: document.getElementById('score-left-ai')
+  },
   overlayTitle: document.getElementById('overlay-title'),
   overlayText: document.getElementById('overlay-text'),
   playAgain: document.getElementById('play-again-btn')
@@ -454,12 +482,35 @@ function applyLanguage(next) {
   els.rotate.textContent = t('rotate', state.horizontal ? 'h' : 'v');
   setStatus(...state.statusMsg);
   renderFleetList();
+  renderScore();
   updatePlacementInfo(true);
   renderLog();
   if (state.overlayMsg) {
     els.overlayTitle.textContent = t(state.overlayMsg[0]);
     els.overlayText.textContent = t(state.overlayMsg[1]);
   }
+}
+
+function renderScore() {
+  // A side's score is derived from the shots recorded on the board it fires at.
+  const sides = [
+    { board: state.enemy, hits: els.score.hitsPlayer, misses: els.score.missesPlayer,
+      accuracy: els.score.accuracyPlayer, sunk: els.score.sunkPlayer, left: els.score.leftPlayer },
+    { board: state.player, hits: els.score.hitsAi, misses: els.score.missesAi,
+      accuracy: els.score.accuracyAi, sunk: els.score.sunkAi, left: els.score.leftAi }
+  ];
+  sides.forEach(side => {
+    let hits = 0;
+    let misses = 0;
+    side.board.shots.forEach(shot => { if (shot === 'hit') hits++; else misses++; });
+    const total = hits + misses;
+    const sunk = side.board.ships.filter(s => s.sunk).length;
+    side.hits.textContent = String(hits);
+    side.misses.textContent = String(misses);
+    side.accuracy.textContent = total ? `${Math.round((hits / total) * 100)}%` : '—';
+    side.sunk.textContent = `${sunk} / ${FLEET.length}`;
+    side.left.textContent = String(FLEET.length - sunk);
+  });
 }
 
 function renderFleetList() {
@@ -569,6 +620,7 @@ function startGame() {
   els.setup.classList.add('hidden');
   els.enemyBoard.classList.remove('disabled');
   renderEnemyBoard();
+  renderScore();
   setStatus('statusYourTurn');
   addLog('logStart');
 }
@@ -583,6 +635,7 @@ function onEnemyBoardClick(event) {
     return;
   }
   renderEnemyBoard();
+  renderScore();
   markLastShot(enemyCells, pos.r, pos.c);
   const where = coordName(pos.r, pos.c);
 
@@ -612,6 +665,7 @@ function aiTurn() {
   const result = state.player.fire(shot.r, shot.c);
   state.ai.record(shot, result);
   renderPlayerBoard();
+  renderScore();
   markLastShot(playerCells, shot.r, shot.c);
   const where = coordName(shot.r, shot.c);
 
@@ -672,6 +726,7 @@ function resetGame() {
   renderPlayerBoard();
   renderEnemyBoard();
   renderFleetList();
+  renderScore();
   updatePlacementInfo();
 }
 

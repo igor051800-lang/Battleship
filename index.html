@@ -53,6 +53,46 @@
     </section>
   </div>
 
+  <section class="panel scoreboard">
+    <h2 data-i18n="scoreTitle"></h2>
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th data-i18n="scoreYou"></th>
+          <th data-i18n="scoreComputer"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th data-i18n="scoreHits"></th>
+          <td id="score-hits-player">0</td>
+          <td id="score-hits-ai">0</td>
+        </tr>
+        <tr>
+          <th data-i18n="scoreMisses"></th>
+          <td id="score-misses-player">0</td>
+          <td id="score-misses-ai">0</td>
+        </tr>
+        <tr>
+          <th data-i18n="scoreAccuracy"></th>
+          <td id="score-accuracy-player">—</td>
+          <td id="score-accuracy-ai">—</td>
+        </tr>
+        <tr>
+          <th data-i18n="scoreSunk"></th>
+          <td id="score-sunk-player">0 / 10</td>
+          <td id="score-sunk-ai">0 / 10</td>
+        </tr>
+        <tr>
+          <th data-i18n="scoreFleetLeft"></th>
+          <td id="score-left-player">10</td>
+          <td id="score-left-ai">10</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
   <section class="panel log-panel">
     <h2 data-i18n="logTitle"></h2>
     <ol id="log" class="log"></ol>
