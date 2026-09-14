@@ -15,7 +15,7 @@ then visit http://localhost:8000
 
 ## Languages
 
-Polish (default) and English, switchable at any time with the language selector in the header;
+English (default) and Polish, switchable at any time with the flag buttons in the header;
 the choice is remembered in `localStorage` and re-renders the status line and shot log in place.
 
 ## Rules implemented

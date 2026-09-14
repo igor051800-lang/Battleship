@@ -344,7 +344,7 @@ const I18N = {
   }
 };
 
-let lang = 'pl';
+let lang = 'en';
 
 // Arguments wrapped with tr() are translated lazily, so stored messages (status line, shot log)
 // follow language switches instead of freezing the wording used when they were produced.
@@ -367,7 +367,7 @@ const els = {
   resetPlacement: document.getElementById('reset-placement-btn'),
   start: document.getElementById('start-btn'),
   difficulty: document.getElementById('difficulty'),
-  language: document.getElementById('language'),
+  langButtons: Array.from(document.querySelectorAll('.lang-btn')),
   fleetList: document.getElementById('fleet-list'),
   setup: document.getElementById('setup'),
   placementInfo: document.getElementById('placement-info'),
@@ -468,10 +468,12 @@ function renderLog() {
 }
 
 function applyLanguage(next) {
-  lang = I18N[next] ? next : 'pl';
+  lang = I18N[next] ? next : 'en';
   document.documentElement.lang = lang;
   document.title = t('documentTitle');
-  els.language.value = lang;
+  els.langButtons.forEach(btn => {
+    btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang));
+  });
   try { localStorage.setItem('statki-lang', lang); } catch (err) { /* storage optional */ }
 
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -765,9 +767,11 @@ els.playAgain.addEventListener('click', resetGame);
 els.difficulty.addEventListener('change', () => {
   if (state.phase === 'placement') state.ai = new AI(els.difficulty.value);
 });
-els.language.addEventListener('change', () => applyLanguage(els.language.value));
+els.langButtons.forEach(btn => {
+  btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
+});
 
 buildBoards();
-let savedLang = 'pl';
-try { savedLang = localStorage.getItem('statki-lang') || 'pl'; } catch (err) { /* storage optional */ }
+let savedLang = 'en';
+try { savedLang = localStorage.getItem('statki-lang') || 'en'; } catch (err) { /* storage optional */ }
 applyLanguage(savedLang);
