@@ -20,11 +20,61 @@ body {
   color: #1c2733;
 }
 
-header { text-align: center; margin-bottom: 12px; }
+header { text-align: center; margin-bottom: 12px; position: relative; }
 h1 { margin: 0; font-size: 1.9rem; }
 h2 { font-size: 1.05rem; margin: 0 0 8px; }
 .subtitle { margin: 4px 0 0; color: #5a6b7c; font-size: 0.9rem; }
-.lang { display: inline-block; margin-top: 8px; font-size: 0.9rem; }
+.lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+}
+
+.lang-btn:hover { background: #eef4fa; }
+
+.lang-btn[aria-pressed="true"] {
+  border-color: #4c6ef5;
+  background: #eef2ff;
+  font-weight: 600;
+}
+
+.lang-btn[aria-pressed="true"]:hover { background: #e2e8ff; }
+
+.flag {
+  width: 22px;
+  height: 14px;
+  border: 1px solid #c3ccd6;
+  border-radius: 2px;
+  display: block;
+}
+
+.mascot {
+  position: absolute;
+  top: -4px;
+  right: 0;
+  width: 68px;
+}
+
+.mascot svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 2px 3px rgba(28, 39, 51, 0.2));
+  transition: transform 0.15s ease;
+}
+
+.mascot:hover svg { transform: rotate(-6deg) scale(1.06); }
 
 main { max-width: 900px; margin: 0 auto; }
 
@@ -52,7 +102,7 @@ button {
   border-radius: 6px;
   cursor: pointer;
 }
-button:not(.cell):hover:not(:disabled) { background: #eef4fa; }
+button:not(.cell):not(.lang-btn):hover:not(:disabled) { background: #eef4fa; }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 #start-btn:not(:disabled) { background: var(--ok); border-color: var(--ok); color: #fff; }
@@ -199,6 +249,8 @@ select { font: inherit; padding: 6px; border-radius: 6px; border: 1px solid #b7c
 @media (max-width: 760px) {
   :root { --cell: 28px; }
   .boards { flex-direction: column; align-items: center; }
+  .mascot { width: 48px; }
+  h1 { font-size: 1.6rem; }
 }
 @media (max-width: 380px) {
   :root { --cell: 24px; }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,15 +9,49 @@
 </head>
 <body>
 <header>
+  <div class="mascot" id="mascot" title="Devin AI">
+    <svg viewBox="0 0 100 100" role="img" aria-label="Devin AI teddy bear">
+      <circle cx="27" cy="25" r="13" fill="#3b4fd8"/>
+      <circle cx="27" cy="25" r="6.5" fill="#8fa2ff"/>
+      <circle cx="73" cy="25" r="13" fill="#3b4fd8"/>
+      <circle cx="73" cy="25" r="6.5" fill="#8fa2ff"/>
+      <circle cx="50" cy="52" r="32" fill="#4c6ef5"/>
+      <ellipse cx="50" cy="64" rx="17" ry="13" fill="#eef1ff"/>
+      <ellipse cx="50" cy="57" rx="5.5" ry="4" fill="#1c2733"/>
+      <path d="M50 61 v4 M50 65 q-5 5 -9 1 M50 65 q5 5 9 1" fill="none" stroke="#1c2733"
+            stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="38" cy="44" r="4.5" fill="#1c2733"/>
+      <circle cx="62" cy="44" r="4.5" fill="#1c2733"/>
+      <circle cx="39.5" cy="42.5" r="1.6" fill="#fff"/>
+      <circle cx="63.5" cy="42.5" r="1.6" fill="#fff"/>
+    </svg>
+  </div>
   <h1>Statki</h1>
   <p class="subtitle" data-i18n="subtitle"></p>
-  <label class="lang">
-    <span data-i18n="language"></span>
-    <select id="language">
-      <option value="pl" selected>Polski</option>
-      <option value="en">English</option>
-    </select>
-  </label>
+  <div class="lang" role="group" id="language">
+    <span class="lang-label" data-i18n="language"></span>
+    <button type="button" class="lang-btn" data-lang="en" aria-pressed="true">
+      <svg class="flag" viewBox="0 0 60 30" aria-hidden="true">
+        <clipPath id="uk-diagonals">
+          <path d="M30 15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/>
+        </clipPath>
+        <rect width="60" height="30" fill="#012169"/>
+        <path d="M0 0 L60 30 M60 0 L0 30" stroke="#fff" stroke-width="6"/>
+        <path d="M0 0 L60 30 M60 0 L0 30" clip-path="url(#uk-diagonals)" stroke="#c8102e"
+              stroke-width="4"/>
+        <path d="M30 0 v30 M0 15 h60" stroke="#fff" stroke-width="10"/>
+        <path d="M30 0 v30 M0 15 h60" stroke="#c8102e" stroke-width="6"/>
+      </svg>
+      <span>English</span>
+    </button>
+    <button type="button" class="lang-btn" data-lang="pl" aria-pressed="false">
+      <svg class="flag" viewBox="0 0 60 30" aria-hidden="true">
+        <rect width="60" height="15" fill="#fff"/>
+        <rect y="15" width="60" height="15" fill="#dc143c"/>
+      </svg>
+      <span>Polski</span>
+    </button>
+  </div>
 </header>
 
 <main>
