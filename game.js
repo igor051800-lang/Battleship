@@ -219,6 +219,36 @@ function beep(freq, duration, type) {
   }
 }
 
+// Low filtered noise burst with a fast decay — reads as a distant explosion.
+function boom(big) {
+  try {
+    if (!audioCtx) {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      audioCtx = new Ctx();
+    }
+    const duration = big ? 0.9 : 0.45;
+    const buffer = audioCtx.createBuffer(1, Math.floor(audioCtx.sampleRate * duration), audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2.5);
+    }
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(big ? 900 : 1400, audioCtx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + duration);
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(big ? 0.5 : 0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+    source.connect(filter).connect(gain).connect(audioCtx.destination);
+    source.start();
+  } catch (err) {
+    /* audio is optional */
+  }
+}
+
 // ---------------------------------------------------------------- i18n
 
 const I18N = {
@@ -577,14 +607,38 @@ function updatePlacementInfo(keepStatus) {
   }
 }
 
+// Which piece of the hull a cell shows. Horizontal ships point right, vertical ships point up.
+function hullPart(ship, r, c) {
+  if (ship.size === 1) return { part: 'single', dir: 'h' };
+  const horizontal = ship.cells[0].r === ship.cells[1].r;
+  const i = ship.cells.findIndex(cell => cell.r === r && cell.c === c);
+  let part = 'mid';
+  if (i === 0) part = horizontal ? 'stern' : 'bow';
+  else if (i === ship.size - 1) part = horizontal ? 'bow' : 'stern';
+  return { part, dir: horizontal ? 'h' : 'v' };
+}
+
+function drawHull(el, ship) {
+  const { part, dir } = hullPart(ship, Number(el.dataset.r), Number(el.dataset.c));
+  el.dataset.part = part;
+  el.dataset.dir = dir;
+}
+
+function resetCell(el) {
+  el.className = 'cell';
+  delete el.dataset.part;
+  delete el.dataset.dir;
+}
+
 function renderPlayerBoard() {
   for (let r = 0; r < SIZE; r++) {
     for (let c = 0; c < SIZE; c++) {
       const k = key(r, c);
       const el = playerCells[k];
-      el.className = 'cell';
+      resetCell(el);
       const ship = state.player.shipAt(r, c);
       const shot = state.player.shots.get(k);
+      if (ship) drawHull(el, ship);
       if (ship && ship.sunk) el.classList.add('sunk');
       else if (shot === 'hit') el.classList.add('hit');
       else if (shot === 'miss') el.classList.add('miss');
@@ -598,14 +652,31 @@ function renderEnemyBoard() {
     for (let c = 0; c < SIZE; c++) {
       const k = key(r, c);
       const el = enemyCells[k];
-      el.className = 'cell';
+      resetCell(el);
       const shot = state.enemy.shots.get(k);
       const ship = state.enemy.shipAt(r, c);
-      if (ship && ship.sunk) el.classList.add('sunk');
-      else if (shot === 'hit') el.classList.add('hit');
+      if (ship && ship.sunk) {
+        drawHull(el, ship);
+        el.classList.add('sunk');
+      } else if (shot === 'hit') el.classList.add('hit');
       else if (shot === 'miss') el.classList.add('miss');
     }
   }
+}
+
+// Overlays a short-lived blast (flash, shockwave, debris) on the struck cell.
+function explode(cells, r, c, big) {
+  const cell = cells[key(r, c)];
+  const blast = document.createElement('span');
+  blast.className = big ? 'blast big' : 'blast';
+  for (let i = 0; i < 8; i++) {
+    const shard = document.createElement('i');
+    shard.style.setProperty('--angle', `${i * 45 + Math.random() * 20}deg`);
+    blast.appendChild(shard);
+  }
+  cell.appendChild(blast);
+  blast.addEventListener('animationend', e => { if (e.target === blast) blast.remove(); });
+  setTimeout(() => blast.remove(), 1500);
 }
 
 function markLastShot(cells, r, c) {
@@ -642,7 +713,8 @@ function onEnemyBoardClick(event) {
   const where = coordName(pos.r, pos.c);
 
   if (result.hit) {
-    beep(result.sunk ? 220 : 660, 0.18, 'square');
+    boom(result.sunk);
+    explode(enemyCells, pos.r, pos.c, result.sunk);
     if (result.sunk) {
       setStatus('statusYouSank', tr(result.ship.nameKey));
       addLog('logYouSank', where, tr(result.ship.nameKey));
@@ -672,7 +744,8 @@ function aiTurn() {
   const where = coordName(shot.r, shot.c);
 
   if (result.hit) {
-    beep(result.sunk ? 160 : 440, 0.18, 'square');
+    boom(result.sunk);
+    explode(playerCells, shot.r, shot.c, result.sunk);
     if (result.sunk) {
       setStatus('statusAiSank', tr(result.ship.nameKey), where);
       addLog('logAiSank', where, tr(result.ship.nameKey));
