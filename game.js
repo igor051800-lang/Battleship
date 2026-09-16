@@ -675,7 +675,7 @@ function explode(cells, r, c, big) {
     blast.appendChild(shard);
   }
   cell.appendChild(blast);
-  blast.addEventListener('animationend', e => { if (e.target === blast) blast.remove(); });
+  blast.addEventListener('animationend', e => { if (e.animationName === 'blast-life') blast.remove(); });
   setTimeout(() => blast.remove(), 1500);
 }
 

@@ -25,6 +25,10 @@ Scope: a single `Board` and its placement/firing primitives, with no AI and no D
 | Placing a ship one clear cell away is accepted | pass |
 | Placing a ship that runs off the board is rejected | pass |
 
+Re-run unchanged after every later feature (scoreboard, flag buttons, explosion effect and
+hull rendering): all green each time. Those features touch only the presentation layer, so
+the rule primitives had nothing to break — and the suite proves it.
+
 **Defects found: none.** Placement legality was deliberately centralized in a single
 `Board.canPlace(cells)` used by manual placement, hover preview, and both fleets' random
 placement, so there was only one implementation for these tests to exercise — and no way
@@ -45,6 +49,9 @@ state, both difficulty levels.
 | 100 easy-mode games: no repeated shots | pass |
 | Easy (pure random) needs measurably more shots than hard | pass — confirms the two modes really differ |
 
+Re-run after every later feature: all green. Explosions and hull drawing are attached to the
+DOM cells, not to `Board`/`AI`, so the simulated games see identical behaviour.
+
 **Defects found: none.** The riskiest behaviours here are state that accumulates across
 turns: the target queue after a hit, orientation lock once two hits line up, and the
 exclusion zone around a sunk ship (legal because ships cannot touch). Those are exactly
@@ -57,7 +64,7 @@ than one.
 
 Scope: `index.html` served over HTTP and driven like a player — placement with rotation,
 randomize, a full game to a win and one to a loss, PL ⇄ EN switching at every phase, replay,
-390px viewport, console clean. **All five shipped defects were caught here**, because each
+390px viewport, console clean. **All six shipped defects were caught here**, because each
 one is invisible to the logic layer: they live in CSS, in event routing, or in the
 presentation of state.
 
@@ -148,12 +155,41 @@ hits/misses from `Board.shots`, sunk ships from `Board.ships[].sunk`, fleet left
 in sync. The browser pass compared 47 scoreboard snapshots against board state across 27
 player shots and 14 AI shots with no mismatch.
 
+### 3.6 Explosion animation cut short (hull/explosion feature)
+
+**Symptom.** The blast overlay added on every hit vanished after ~460 ms (sink blast
+~720 ms) instead of the intended 900 / 1150 ms; measured in the browser with an
+`animationend` listener — the shockwave ring and debris never finished.
+
+**Cause.** The `.blast` element is removed on its own `animationend`. The guard
+`e.target === blast` was meant to ignore the bubbling `animationend` of the child debris
+shards, but the flash is a `::before` pseudo-element, and pseudo-element animation events
+are dispatched with `target` set to the owning element. The first `flash` end
+(0.45 s / 0.7 s) therefore passed the guard and removed the whole blast.
+
+**Fix.** Filter on the animation name instead of the target:
+
+```js
+blast.addEventListener('animationend', e => {
+  if (e.animationName === 'blast-life') blast.remove();
+});
+```
+
+`blast-life` runs only on the container, for the full lifetime; the 1.5 s `setTimeout`
+fallback remains for browsers that never fire the event.
+
 ### Other UI checks that passed
 
 Manual placement with `R` rotation and illegal placements visibly rejected; randomize;
 hit-goes-again and miss-passes-turn; sunk ships revealed on the tracking board; a full win
 and a full loss; replay resetting both boards, log and scoreboard; PL ⇄ EN at placement,
 mid-game and post-game; no horizontal overflow at 390px.
+
+For the hull/explosion feature: horizontal hulls point right and vertical hulls point up for
+every ship size; Clear and replay drop the `data-part`/`data-dir` attributes so no hull
+ghosts remain; hidden enemy hits show a crater and the hull is revealed only on sink; no
+`.blast` nodes left in the DOM after the animation; console clean; layout intact at 1280px
+and 390px.
 
 ---
 
