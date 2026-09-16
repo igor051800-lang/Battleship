@@ -64,7 +64,7 @@ than one.
 
 Scope: `index.html` served over HTTP and driven like a player — placement with rotation,
 randomize, a full game to a win and one to a loss, PL ⇄ EN switching at every phase, replay,
-390px viewport, console clean. **All six shipped defects were caught here**, because each
+390px viewport, console clean. **All seven shipped defects were caught here**, because each
 one is invisible to the logic layer: they live in CSS, in event routing, or in the
 presentation of state.
 
@@ -177,6 +177,22 @@ blast.addEventListener('animationend', e => {
 
 `blast-life` runs only on the container, for the full lifetime; the 1.5 s `setTimeout`
 fallback remains for browsers that never fire the event.
+
+### 3.7 Sunk ships painted over the victory dialog
+
+**Symptom.** After the last enemy ship sank, its burning hull cells were drawn on top of the
+end-game overlay, covering part of the "Victory" title and the "Play again" button.
+
+**Cause.** Hit/sunk cells had been given `z-index: 1` so the blast could spill over
+neighbouring cells, while the fixed-position overlay kept `z-index: auto`. A positioned
+element with a positive z-index beats a later `auto` sibling regardless of DOM order.
+
+**Fix.** Dropped the unnecessary cell z-index (the blast itself already has one inside
+its cell) and gave the overlay an explicit stacking level:
+
+```css
+.overlay { z-index: 10; }
+```
 
 ### Other UI checks that passed
 

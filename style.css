@@ -317,7 +317,6 @@ select { font: inherit; padding: 6px; border-radius: 6px; border: 1px solid #b7c
 
 .board { position: relative; }
 .board .cell { overflow: visible; }
-.board .cell.hit, .board .cell.sunk { z-index: 1; }
 
 .scoreboard { margin-top: 16px; }
 .scoreboard table {
@@ -345,6 +344,7 @@ select { font: inherit; padding: 6px; border-radius: 6px; border: 1px solid #b7c
 }
 
 .overlay {
+  z-index: 10;
   position: fixed;
   inset: 0;
   background: rgba(12, 24, 36, 0.7);
