@@ -70,7 +70,7 @@ Open DevTools and keep the console visible. It should stay free of errors for th
 Handled by `onPlayerBoardHover`, `onPlayerBoardClick`, `updatePlacementInfo`,
 `toggleRotation` and `renderFleetList`.
 
-- [ ] On load, the placement info names the next ship (four-master, size 4), the fleet list
+- [ ] On load, the placement info names the next ship ("four-cell ship", size 4), the fleet list
       highlights it as `next`, and **Start** is disabled.
 - [ ] Hovering over your board previews the ship: green (`preview-ok`) where it fits, red
       (`preview-bad`) where it would leave the board, overlap a ship or touch one, corners included.
@@ -100,7 +100,8 @@ Handled by `startGame`, `onEnemyBoardClick`, `aiTurn`, `renderEnemyBoard`, `mark
 - [ ] **Sunk** — every cell of the sunk enemy ship is revealed as a hull silhouette with the
       `sunk` class (`drawHull`). The status and log name the ship type.
 - [ ] Clicking a cell you already fired at changes nothing and shows `statusAlreadyShot`.
-- [ ] The most recent shot on each board has the `last-shot` marker, and it moves with every shot.
+- [ ] During play, the most recent shot on each board has the `last-shot` marker, and it moves
+      with every shot. The final re-render in `finish()` clears both markers.
 - [ ] The shot log gets one entry per shot (hit, miss, sunk) for both sides, with coordinates
       such as `B7` (`coordName`), and scrolls to the newest entry.
 - [ ] Enemy ships stay hidden until they are sunk. Your own ships are always visible.
