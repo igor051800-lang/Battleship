@@ -3,7 +3,12 @@
 Browser-based single-player Battleship ("Statki", Polish rules) — plain HTML/CSS/JS, no build step,
 no dependencies.
 
-## Run
+## Play online
+
+**https://igor051800-lang.github.io/Battleship/**: no install needed. The site is redeployed to GitHub Pages
+automatically on every push to `main` (`.github/workflows/pages.yml`).
+
+## Run locally
 
 Open `index.html` directly in a browser, or:
 
